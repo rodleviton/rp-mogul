@@ -1,29 +1,47 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <Shell>
+      <Header>
+        <Logo title="Mogul"/>
+        <Avatar src="./assets/images/avatar.jpg"/>
+      </Header>
+      <router-view/>
+    </Shell>
   </div>
 </template>
 
+<script>
+import Vue from "vue"
+import Avatar from "@/components/Avatar.vue"
+import Header from "@/components/Header.vue"
+import Logo from "@/components/Logo.vue"
+import Shell from "@/components/Shell.vue"
+
+export default Vue.extend({
+  components: {
+    Avatar,
+    Header,
+    Logo,
+    Shell,
+  },
+})
+</script>
+
 <style lang="scss">
+@font-face {
+  font-family: "Eina";
+  src: url("/assets/fonts/eina-03-semibold.woff2") format("woff2"),
+    url("/assets/fonts/eina-03-semibold.woff") format("woff");
+}
+
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Eina", serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+  color: #1c1c1c;
+  display: flex;
+  justify-content: center;
+  padding: 100px 0;
 }
 </style>
