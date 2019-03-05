@@ -1,11 +1,11 @@
 <template>
   <div>
-    <CardStack v-bind:cards="data"/>
+    <CardStack :cards="data" :onChange="onActiveTitle"/>
     <Panel>
-      <h2 class="title">Blade Runner 2049</h2>
+      <h2 class="title">{{getCardTitle()}}</h2>
       <h3 class="date">
         Coming in
-        <span>Coming in 10.6.17</span>
+        <span>{{getReleaseData()}}</span>
       </h3>
     </Panel>
   </div>
@@ -23,7 +23,18 @@ export default Vue.extend({
     CardStack,
     Panel,
   },
-  data: () => ({ data }),
+  data: () => ({ data, activeTitle: data[0] }),
+  methods: {
+    getCardTitle() {
+      return this.activeTitle.title
+    },
+    getReleaseData() {
+      return this.activeTitle.release
+    },
+    onActiveTitle(id) {
+      this.activeTitle = this.data.find(item => id === item.id)
+    },
+  },
 })
 </script>
 

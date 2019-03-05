@@ -1,4 +1,4 @@
-# mogul
+# mogul-new
 
 ## Project setup
 ```

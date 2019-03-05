@@ -2,8 +2,8 @@
   <div id="app">
     <Shell>
       <Header>
-        <Logo title="Mogul"/>
-        <Avatar src="./assets/images/avatar.jpg"/>
+        <Logo title="Movies"/>
+        <Avatar src="assets/images/avatar.jpg"/>
       </Header>
       <router-view/>
     </Shell>
