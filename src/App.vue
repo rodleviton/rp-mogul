@@ -30,8 +30,8 @@ export default Vue.extend({
 <style lang="scss">
 @font-face {
   font-family: "Eina";
-  src: url("/assets/fonts/eina-03-semibold.woff2") format("woff2"),
-    url("/assets/fonts/eina-03-semibold.woff") format("woff");
+  src: url("~@/assets/fonts/eina-03-semibold.woff2") format("woff2"),
+    url("~@/assets/fonts/eina-03-semibold.woff") format("woff");
 }
 
 #app {
