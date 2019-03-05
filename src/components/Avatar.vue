@@ -1,6 +1,6 @@
 <template>
   <div class="avatar">
-    <img v-bind:src="src">
+    <img v-bind:src="src" />
   </div>
 </template>
 

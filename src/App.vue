@@ -2,10 +2,10 @@
   <div id="app">
     <Shell>
       <Header>
-        <Logo title="Movies"/>
-        <Avatar src="assets/images/avatar.jpg"/>
+        <Logo title="Movies" />
+        <Avatar src="img/user/avatar.jpg" />
       </Header>
-      <router-view/>
+      <router-view />
     </Shell>
   </div>
 </template>

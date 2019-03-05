@@ -7,18 +7,18 @@
       :isDragging="isDragging"
       :opacity="item.imageOpacity"
       :key="item._uuid"
-      :style="{ 
-          top: `${item.yPos}px`, 
-          width: `${item.width}px`,
-          height: `${item.height}px`,
-          opacity: item.opacity,
-          display: index > (maxVisibleCards + 2) ? 'none' : 'flex',
-          zIndex: item.zIndex, 
-          position: 'absolute',
-          transition: `transform ${isDragging ? 0 : speed}s ease 0s`,
-          transform: `scale(${item.scale}, ${item.scale}) translate(${item.xPos}px, 0)`,
-          transformOrigin: 0
-        }"
+      :style="{
+        top: `${item.yPos}px`,
+        width: `${item.width}px`,
+        height: `${item.height}px`,
+        opacity: item.opacity,
+        display: index > maxVisibleCards + 2 ? 'none' : 'flex',
+        zIndex: item.zIndex,
+        position: 'absolute',
+        transition: `transform ${isDragging ? 0 : speed}s ease 0s`,
+        transform: `scale(${item.scale}, ${item.scale}) translate(${item.xPos}px, 0)`,
+        transformOrigin: 0,
+      }"
     />
   </div>
 </template>
@@ -116,40 +116,18 @@ export default Vue.extend({
         return {
           ...defaults,
           _uuid: card._uuid,
-          xPos: this.calculateCardProp(
-            defaults.xPos,
-            this.cardXPosOffset,
-            1,
-            isActiveCard,
-          ),
+          xPos: this.calculateCardProp(defaults.xPos, this.cardXPosOffset, 1, isActiveCard),
           opacity: this.isCardVisible(cardPosition) ? 1 : 0,
           imageOpacity: this.isCardVisible(cardPosition)
-            ? this.calculateCardProp(
-                defaults.imageOpacity,
-                this.opacityMultiplier,
-                0,
-                isActiveCard,
-              )
+            ? this.calculateCardProp(defaults.imageOpacity, this.opacityMultiplier, 0, isActiveCard)
             : 0,
-          scale: this.calculateCardProp(
-            defaults.scale,
-            this.scaleMultiplier,
-            0,
-            isActiveCard,
-          ),
-          imageScale: this.calculateCardProp(
-            defaults.imageScale,
-            this.scaleMultiplier * 4,
-            0,
-            isActiveCard,
-          ),
+          scale: this.calculateCardProp(defaults.scale, this.scaleMultiplier, 0, isActiveCard),
+          imageScale: this.calculateCardProp(defaults.imageScale, this.scaleMultiplier * 4, 0, isActiveCard),
         }
       })
     },
     calculateCardProp(prop, multiplier, defaultMultiplier, isActiveCard) {
-      const offset = isActiveCard
-        ? defaultMultiplier
-        : multiplier / this.activeCardMaxTravelDistance
+      const offset = isActiveCard ? defaultMultiplier : multiplier / this.activeCardMaxTravelDistance
 
       return prop + offset * this.activeCardOffset
     },
@@ -161,18 +139,12 @@ export default Vue.extend({
 
       this.isDragging = true
       this.dragStartX = dragXPos - this.elementXPosOffset
-      this.$el.addEventListener(
-        this.isTouch ? "touchmove" : "mousemove",
-        this.onDrag,
-      )
+      this.$el.addEventListener(this.isTouch ? "touchmove" : "mousemove", this.onDrag)
     },
     onTouchEnd() {
       this.isDragging = false
       this.dragStartX = 0
-      this.$el.removeEventListener(
-        this.isTouch ? "touchmove" : "mousemove",
-        this.onDrag,
-      )
+      this.$el.removeEventListener(this.isTouch ? "touchmove" : "mousemove", this.onDrag)
       this.updateStack()
     },
     onDrag(e) {
@@ -204,9 +176,7 @@ export default Vue.extend({
         yPos: 0,
         zIndex: this.totalCards - index,
         opacity: this.isCardVisible(cardPosition) ? 1 : 0,
-        imageOpacity: this.isCardVisible(cardPosition)
-          ? this.getCardProp(cardPosition, this.opacityMultiplier)
-          : 0,
+        imageOpacity: this.isCardVisible(cardPosition) ? this.getCardProp(cardPosition, this.opacityMultiplier) : 0,
         scale: this.getCardProp(cardPosition, this.scaleMultiplier),
         imageScale: this.getCardProp(cardPosition, this.scaleMultiplier * 4),
         cover: card.cover,
@@ -237,10 +207,7 @@ export default Vue.extend({
       return this.$props.cards.length
     },
     cardXPosOffset() {
-      return (
-        (this.stackWidth - this.stackGutter * 2 - this.cardWidth) /
-        (this.maxVisibleCards - 1)
-      )
+      return (this.stackWidth - this.stackGutter * 2 - this.cardWidth) / (this.maxVisibleCards - 1)
     },
     stackWidth() {
       return this.$el.clientWidth
@@ -257,16 +224,10 @@ export default Vue.extend({
   },
   mounted() {
     const debouncedOnTouchStart = debounce(this.onTouchStart, this.debounceRate)
-    document.addEventListener(
-      this.isTouch ? "touchstart" : "mousedown",
-      debouncedOnTouchStart,
-    )
+    document.addEventListener(this.isTouch ? "touchstart" : "mousedown", debouncedOnTouchStart)
 
     const debouncedOnTouchEnd = debounce(this.onTouchEnd, this.debounceRate)
-    document.addEventListener(
-      this.isTouch ? "touchend" : "mouseup",
-      debouncedOnTouchEnd,
-    )
+    document.addEventListener(this.isTouch ? "touchend" : "mouseup", debouncedOnTouchEnd)
 
     const clonedCards = [].concat(this.$props.cards)
     const lastCard = clonedCards.pop()

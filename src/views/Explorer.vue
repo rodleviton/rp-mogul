@@ -1,11 +1,11 @@
 <template>
   <div>
-    <CardStack :cards="data" :onChange="onActiveTitle"/>
+    <CardStack :cards="data" :onChange="onActiveTitle" />
     <Panel>
-      <h2 class="title">{{getCardTitle()}}</h2>
+      <h2 class="title">{{ getCardTitle() }}</h2>
       <h3 class="date">
         Coming in
-        <span>{{getReleaseData()}}</span>
+        <span>{{ getReleaseData() }}</span>
       </h3>
     </Panel>
   </div>

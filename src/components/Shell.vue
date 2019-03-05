@@ -3,7 +3,7 @@
     <div class="container">
       <slot></slot>
     </div>
-    <div class="shadow"/>
+    <div class="shadow" />
   </main>
 </template>
 

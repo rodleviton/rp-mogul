@@ -1,6 +1,6 @@
 <template>
   <h1 class="logo">
-    {{title}}
+    {{ title }}
     <div class="period"></div>
   </h1>
 </template>

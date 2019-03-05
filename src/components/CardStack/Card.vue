@@ -3,12 +3,12 @@
     <img
       v-bind:src="src"
       draggable="false"
-      :style="{ 
-      opacity: opacity,
-      transform: `scale(${getScale()}, ${getScale()}`,
-      transition: `transform ${isDragging ? 0 : speed}s, opacity ${isDragging ? 0 : speed}s`,
-    }"
-    >
+      :style="{
+        opacity: opacity,
+        transform: `scale(${getScale()}, ${getScale()}`,
+        transition: `transform ${isDragging ? 0 : speed}s, opacity ${isDragging ? 0 : speed}s`,
+      }"
+    />
   </div>
 </template>
 
