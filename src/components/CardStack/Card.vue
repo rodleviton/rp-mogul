@@ -6,7 +6,9 @@
       :style="{
         opacity: opacity,
         transform: `scale(${getScale()}, ${getScale()}`,
-        transition: `transform ${isDragging ? 0 : speed}s, opacity ${isDragging ? 0 : speed}s`,
+        transition: `transform ${isDragging ? 0 : speed}s, opacity ${
+          isDragging ? 0 : speed
+        }s`,
       }"
     />
   </div>
