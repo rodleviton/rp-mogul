@@ -4,7 +4,7 @@
 
 ## Overview
 
-The goal of this project was to take inspiration from a [Dribbble]() project and recreate it as close as possible with code.
+The goal of this project was to take inspiration from a [Dribbble](https://dribbble.com/shots/3982621) project and recreate it as close as possible with code.
 
 **View the demo [here](https://rodleviton.github.io/rp-mogul/).**
 

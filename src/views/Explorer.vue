@@ -16,11 +16,16 @@
           opacity: getOpacity(index),
         }"
       >
-        <h2 class="title">{{ item.title }}</h2>
-        <h3 class="date">
-          Coming in
-          <span>{{ item.release }}</span>
-        </h3>
+        <div>
+          <h2 class="title">{{ item.title }}</h2>
+          <h3 class="date">
+            Coming in
+            <span>{{ item.release }}</span>
+          </h3>
+        </div>
+      </div>
+      <div class="rating">
+        <Rating :rating="this.getActiveRating()" />
       </div>
     </Panel>
   </div>
@@ -30,6 +35,7 @@
 import Vue from "vue"
 import CardStack from "@/components/CardStack/CardStack.vue"
 import Panel from "@/components/Panel.vue"
+import Rating from "@/components/Rating/Rating.vue"
 
 import { data } from "@/assets/data"
 
@@ -37,6 +43,7 @@ export default Vue.extend({
   components: {
     CardStack,
     Panel,
+    Rating,
   },
   data: () => ({
     data,
@@ -47,6 +54,9 @@ export default Vue.extend({
     speed: 0.2,
   }),
   methods: {
+    getActiveRating() {
+      return this.data[this.activeIndex].rating
+    },
     isCurrent(index) {
       return index === this.activeIndex
     },
@@ -135,5 +145,11 @@ export default Vue.extend({
   font-size: 11px;
   line-height: 15px;
   color: #9ba7c6;
+}
+
+.rating {
+  position: absolute;
+  right: 12px;
+  top: 15px;
 }
 </style>

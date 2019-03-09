@@ -12,6 +12,7 @@ export default Vue.extend({})
 
 <style scoped lang="scss">
 .panel {
+  display: flex;
   text-align: left;
   background: #fff;
   position: absolute;
