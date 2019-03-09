@@ -7,8 +7,8 @@
         :key="index"
         :style="{
           position: 'absolute',
-          top: `${getYPosition(index)}px`,
-          transition: `top ${
+          transform: `translate(0, ${getYPosition(index)}px)`,
+          transition: `transform ${
             isDragging || !isVisible(index) ? 0 : speed
           }s ease 0s, opacity ${
             isDragging || !isVisible(index) ? 0 : speed
