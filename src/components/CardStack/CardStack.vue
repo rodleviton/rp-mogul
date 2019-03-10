@@ -4,10 +4,13 @@
       v-for="(item, index) in stack"
       :src="item.cover"
       :scale="item.imageScale"
+      :speed="speed"
       :isDragging="isDragging"
+      :isSelected="index === 1 && isDetailView"
       :opacity="item.imageOpacity"
       :key="item._uuid"
       :style="{
+        borderRadius: item.borderRadius,
         top: `${item.yPos}px`,
         width: `${item.width}px`,
         height: `${item.height}px`,
@@ -15,11 +18,12 @@
         display: index > maxVisibleCards + 2 ? 'none' : 'flex',
         zIndex: item.zIndex,
         position: 'absolute',
-        transition: `transform ${isDragging ? 0 : speed}s ease 0s`,
-        transform: `scale(${item.scale}, ${item.scale}) translate(${
-          item.xPos
-        }px, 0)`,
-        transformOrigin: 0,
+        transition: `all ${isDragging ? 0 : speed}s ease`,
+        transform: `
+          scale(${item.scale}, ${item.scale}) 
+          translate(${item.xPos}px, 0)
+        `,
+        transformOrigin: item.transformOrigin,
       }"
     />
   </div>
@@ -41,6 +45,14 @@ export default Vue.extend({
       type: Function,
       required: true,
     },
+    onSelect: {
+      type: Function,
+      required: true,
+    },
+    onDeselect: {
+      type: Function,
+      required: true,
+    },
     maxVisible: {
       type: Number,
       default: () => 3,
@@ -57,37 +69,57 @@ export default Vue.extend({
       activeCardOffset: 0,
       cardWidth: 286,
       cardHeight: 458,
-      debounceRate: 10,
+      debounceRate: 25,
       dragging: false,
       dragStartX: 0,
       isTouch: "ontouchstart" in window,
+      isDetailView: false,
       isDragging: false,
       isDraggingLeft: false,
       isDraggingRight: false,
       opacityMultiplier: 0.35,
-      stackRestPoints: [],
       scaleMultiplier: 0.075,
+      speed: 0.2,
       stack: [],
       stackGutter: 24,
-      speed: 0.2,
+      stackRestPoints: [],
     }
   },
   components: {
     Card,
   },
   methods: {
+    moveNext() {
+      this.isDraggingRight = true
+      this.isDraggingLeft = false
+      this.activeCardIndex = 1
+      this.$data.stack[
+        this.activeCardIndex
+      ].xPos = this.activeCardMaxTravelDistance
+
+      this.updateStack()
+    },
+    movePrevious() {
+      this.isDraggingRight = false
+      this.isDraggingLeft = true
+      this.activeCardIndex = 0
+      this.$data.stack[this.activeCardIndex].xPos = -this
+        .activeCardMaxTravelDistance
+
+      this.updateStack()
+    },
     updateStack() {
       const activeCard = this.$data.stack[this.activeCardIndex]
       const activeCardRestPoint = this.stackRestPoints[this.activeCardIndex]
       const distanceTravelled = activeCard.xPos - activeCardRestPoint
 
       if (this.isDraggingRight) {
-        if (distanceTravelled > this.activeCardMaxTravelDistance / 3) {
+        if (distanceTravelled > this.activeCardMaxTravelDistance / 4) {
           const cardToMoveToBottomOfStack = this.$data.stack.shift()
           this.$data.stack.push(cardToMoveToBottomOfStack)
         }
       } else {
-        if (distanceTravelled * -1 > this.activeCardMaxTravelDistance / 3) {
+        if (distanceTravelled * -1 > this.activeCardMaxTravelDistance / 4) {
           const cardToMoveToTopOfStack = this.$data.stack.pop()
           this.$data.stack.unshift(cardToMoveToTopOfStack)
         }
@@ -120,7 +152,9 @@ export default Vue.extend({
         const isActiveCard = index === this.activeCardIndex
 
         if (isActiveCard) {
-          this.onMove(this.activeCardOffset / this.activeCardMaxTravelDistance)
+          this.onStackMove(
+            this.activeCardOffset / this.activeCardMaxTravelDistance
+          )
         }
 
         return {
@@ -183,7 +217,19 @@ export default Vue.extend({
         this.isTouch ? "touchmove" : "mousemove",
         this.onDrag
       )
-      this.updateStack()
+
+      const offset = this.activeCardOffset / this.activeCardMaxTravelDistance
+
+      // Treat this like a click instead of the user dragging
+      if (offset === 0) {
+        if (this.isDetailView) {
+          this.onStackDeselect()
+        } else {
+          this.onStackSelect()
+        }
+      } else {
+        this.updateStack()
+      }
     },
     onDrag(e) {
       const dragXPos = this.getDragXPos(e)
@@ -207,6 +253,7 @@ export default Vue.extend({
       return {
         id: card.id,
         background: "#fff",
+        borderRadius: "8px",
         title: card.title,
         height: this.cardHeight,
         width: this.cardWidth,
@@ -221,6 +268,7 @@ export default Vue.extend({
         imageScale: this.getCardProp(cardPosition, this.scaleMultiplier * 4),
         cover: card.cover,
         isVisible: this.isCardVisible(cardPosition),
+        transformOrigin: 0,
       }
     },
     getStackRestPoints() {
@@ -235,11 +283,60 @@ export default Vue.extend({
         return this.stackWidth - this.cardWidth - offset - this.stackGutter
       })
     },
-    onStackMove(percentage) {
-      this.$props.onMove(percentage)
+    /**
+     * Callbacks
+     */
+    onStackSelect() {
+      this.isDetailView = true
+      this.speed = 0.75
+
+      // TODO - refactor this into a method that tackes overrides
+      this.$data.stack = this.$data.stack.map((card, index) => {
+        if (index === 1) {
+          return {
+            _uuid: card._uuid,
+            ...this.getDefaultCardProps(card, index),
+            width: this.stackWidth,
+            height: this.stackHeight,
+            xPos: 0,
+            imageScale: 0.6,
+            transformOrigin: `100% 100%`,
+            borderRadius: 0,
+          }
+        }
+        return {
+          _uuid: card._uuid,
+          ...this.getDefaultCardProps(card, index),
+        }
+      })
+
+      this.$props.onSelect(this.$data.stack[1].id)
+    },
+    onStackDeselect() {
+      this.isDetailView = false
+      this.speed = 0.2
+
+      this.$data.stack = this.$data.stack.map((card, index) => {
+        if (index === 1) {
+          return {
+            _uuid: card._uuid,
+            ...this.getDefaultCardProps(card, index),
+          }
+        }
+        return {
+          _uuid: card._uuid,
+          ...this.getDefaultCardProps(card, index),
+        }
+      })
+
+      this.$props.onDeselect(this.$data.stack[1].id)
+    },
+    onStackMove(factor) {
+      this.$props.onMove(factor)
     },
     onStackUpdate() {
       this.$props.onChange(this.$data.stack[1].id)
+      this.activeCardOffset = 0
     },
   },
   computed: {
@@ -290,6 +387,26 @@ export default Vue.extend({
       _uuid: uuid(),
       ...this.getDefaultCardProps(card, index),
     }))
+
+    const onKeyDown = e => {
+      const LEFT_ARROW = 37
+      const UP_ARROW = 38
+      const RIGHT_ARROW = 39
+      const DOWN_ARROW = 40
+
+      if (e.which === LEFT_ARROW) {
+        this.movePrevious()
+      } else if (e.which === RIGHT_ARROW) {
+        this.moveNext()
+      } else if (e.which === UP_ARROW) {
+        this.onStackSelect()
+      } else if (e.which === DOWN_ARROW) {
+        this.onStackDeselect()
+      }
+    }
+
+    const debouncedOnKeyDown = debounce(onKeyDown, this.debounceRate)
+    document.addEventListener("keydown", debouncedOnKeyDown)
 
     this.onStackUpdate()
   },

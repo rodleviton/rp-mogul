@@ -5,7 +5,9 @@
       draggable="false"
       :style="{
         opacity: opacity,
-        transform: `scale(${getScale()}, ${getScale()}`,
+        transform: `scale(${getScale()}, ${getScale()}) translate(0, ${
+          isSelected ? 130 : 0
+        }px)`,
         transition: `transform ${isDragging ? 0 : speed}s, opacity ${
           isDragging ? 0 : speed
         }s`,
@@ -18,11 +20,6 @@
 import Vue from "vue"
 
 export default Vue.extend({
-  data() {
-    return {
-      speed: 0.2,
-    }
-  },
   methods: {
     getScale() {
       if (this.scale === 1) {
@@ -36,6 +33,14 @@ export default Vue.extend({
     scale: {
       type: Number,
       default: 1,
+    },
+    speed: {
+      type: Number,
+      default: () => 0.2,
+    },
+    isSelected: {
+      type: Boolean,
+      default: false,
     },
     isDragging: {
       type: Boolean,
@@ -58,7 +63,6 @@ export default Vue.extend({
   align-items: center;
   justify-content: center;
   background: #f3f3f3;
-  border-radius: 8px;
   overflow: hidden;
   box-shadow: -4px 22px 44px 0px rgba(0, 0, 0, 0.05);
   color: #e3e3e3;

@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/rp-mogul/precache-manifest.35fc5ba6088a9ab94422221d29cf6d1b.js"
+  "/rp-mogul/precache-manifest.f1113e8ce9d10ac0d621274193b27aee.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "rp-mogul"});

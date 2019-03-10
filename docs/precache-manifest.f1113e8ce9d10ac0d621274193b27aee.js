@@ -8,8 +8,8 @@ self.__precacheManifest = [
     "url": "/rp-mogul/js/about.41d636ee.js"
   },
   {
-    "revision": "e9a1b988c9694d1d36ce",
-    "url": "/rp-mogul/js/app.4452309b.js"
+    "revision": "2925f555d0fca92effb8",
+    "url": "/rp-mogul/js/app.421ca15d.js"
   },
   {
     "revision": "9986dfe83bd80c309b49",
@@ -28,7 +28,7 @@ self.__precacheManifest = [
     "url": "/rp-mogul/img/star.03c576d3.svg"
   },
   {
-    "revision": "dec400d6679978422335fee959a4854e",
+    "revision": "55c8c3776eb928f24731235e4b2f5de9",
     "url": "/rp-mogul/index.html"
   },
   {
@@ -60,7 +60,7 @@ self.__precacheManifest = [
     "url": "/rp-mogul/fonts/eina-03-semibold.4dd68d20.woff"
   },
   {
-    "revision": "e9a1b988c9694d1d36ce",
-    "url": "/rp-mogul/css/app.1aeca5f4.css"
+    "revision": "2925f555d0fca92effb8",
+    "url": "/rp-mogul/css/app.2422d4f2.css"
   }
 ];

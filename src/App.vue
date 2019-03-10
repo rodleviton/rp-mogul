@@ -1,10 +1,6 @@
 <template>
   <div id="app">
     <Shell>
-      <Header>
-        <Logo title="Movies" />
-        <Avatar src="img/user/avatar.jpg" />
-      </Header>
       <router-view />
     </Shell>
   </div>
@@ -12,16 +8,10 @@
 
 <script>
 import Vue from "vue"
-import Avatar from "@/components/Avatar.vue"
-import Header from "@/components/Header.vue"
-import Logo from "@/components/Logo.vue"
 import Shell from "@/components/Shell.vue"
 
 export default Vue.extend({
   components: {
-    Avatar,
-    Header,
-    Logo,
     Shell,
   },
 })

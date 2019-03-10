@@ -1,7 +1,31 @@
 <template>
   <div>
-    <CardStack :cards="data" :onChange="onChange" :onMove="onMove" />
-    <Panel>
+    <Header
+      class="header"
+      :style="{
+        transform: `scale(${this.getHeaderScale()}) translate(0, ${this.getHeaderOffset()}%)`,
+        opacity: getHeaderOpacity(),
+        transition: `opacity ${isDetailView ? 0.35 : speed}s, transform ${
+          isDetailView ? 0.75 : speed
+        }s ease`,
+      }"
+    >
+      <Logo title="Movies" />
+      <Avatar src="img/user/avatar.jpg" />
+    </Header>
+    <CardStack
+      class="stack"
+      :cards="data"
+      :onChange="onChange"
+      :onMove="onMove"
+      :onSelect="onSelect"
+      :onDeselect="onDeselect"
+      :style="{
+        transform: `translate(0, ${this.getStackYPosition()}px)`,
+        transition: `all ${speed}s ease`,
+      }"
+    />
+    <Panel :active="isDetailView" :speed="speed">
       <div
         v-for="(item, index) in data"
         :key="index"
@@ -22,6 +46,7 @@
             Coming in
             <span>{{ item.release }}</span>
           </h3>
+          <div class="description" v-html="item.description" />
         </div>
       </div>
       <div class="rating">
@@ -33,15 +58,21 @@
 
 <script>
 import Vue from "vue"
+import Avatar from "@/components/Avatar.vue"
 import CardStack from "@/components/CardStack/CardStack.vue"
+import Logo from "@/components/Logo.vue"
 import Panel from "@/components/Panel.vue"
 import Rating from "@/components/Rating/Rating.vue"
+import Header from "@/components/Header.vue"
 
 import { data } from "@/assets/data"
 
 export default Vue.extend({
   components: {
+    Avatar,
     CardStack,
+    Header,
+    Logo,
     Panel,
     Rating,
   },
@@ -52,8 +83,21 @@ export default Vue.extend({
     factor: 0,
     isDragging: false,
     speed: 0.2,
+    isDetailView: false,
   }),
   methods: {
+    getStackYPosition() {
+      return this.isDetailView ? 0 : 90
+    },
+    getHeaderOffset() {
+      return this.isDetailView ? -100 : 0
+    },
+    getHeaderScale() {
+      return this.isDetailView ? 1.25 : 1
+    },
+    getHeaderOpacity() {
+      return this.isDetailView ? 0 : 1
+    },
     getActiveRating() {
       return this.data[this.activeIndex].rating
     },
@@ -80,6 +124,14 @@ export default Vue.extend({
     onChange(id) {
       this.isDragging = false
       this.activeIndex = this.data.findIndex(item => id === item.id)
+    },
+    onSelect() {
+      this.speed = 0.75
+      this.isDetailView = true
+    },
+    onDeselect() {
+      this.speed = 0.2
+      this.isDetailView = false
     },
     getYPosition(index) {
       if (!this.isDragging) {
@@ -141,6 +193,12 @@ export default Vue.extend({
   line-height: 22px;
 }
 
+.header {
+  position: absolute;
+  height: 90px;
+  width: 100%;
+}
+
 .date {
   font-size: 11px;
   line-height: 15px;
@@ -151,5 +209,16 @@ export default Vue.extend({
   position: absolute;
   right: 12px;
   top: 15px;
+}
+
+.description {
+  font-size: 16px;
+  line-height: 21px;
+  color: #b9bbc4;
+  margin-top: 40px;
+}
+
+.stack {
+  position: absolute;
 }
 </style>
