@@ -18,6 +18,7 @@
       :cards="data"
       :onChange="onChange"
       :onMove="onMove"
+      :onDetailViewMove="onDetailViewMove"
       :onSelect="onSelect"
       :onDeselect="onDeselect"
       :style="{
@@ -81,13 +82,18 @@ export default Vue.extend({
     offset: 20,
     activeIndex: 0,
     factor: 0,
+    detailViewOffsetFactor: 0,
     isDragging: false,
     speed: 0.2,
     isDetailView: false,
   }),
   methods: {
     getStackYPosition() {
-      return this.isDetailView ? 0 : 90
+      const HEADER_HEIGHT = 90
+      console.log(1 - this.detailViewOffsetFactor)
+      return this.isDetailView
+        ? 0 + HEADER_HEIGHT * this.detailViewOffsetFactor
+        : HEADER_HEIGHT
     },
     getHeaderOffset() {
       return this.isDetailView ? -100 : 0
@@ -126,7 +132,7 @@ export default Vue.extend({
       this.activeIndex = this.data.findIndex(item => id === item.id)
     },
     onSelect() {
-      this.speed = 0.75
+      this.speed = 0.5
       this.isDetailView = true
     },
     onDeselect() {
@@ -182,6 +188,10 @@ export default Vue.extend({
     onMove(factor) {
       this.isDragging = true
       this.factor = factor
+    },
+    onDetailViewMove(factor) {
+      this.isDragging = true
+      this.detailViewOffsetFactor = factor
     },
   },
 })

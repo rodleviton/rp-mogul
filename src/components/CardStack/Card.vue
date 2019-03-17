@@ -22,8 +22,8 @@ import Vue from "vue"
 export default Vue.extend({
   methods: {
     getScale() {
-      if (this.scale === 1) {
-        return this.scale / 2
+      if (this.scale > 1) {
+        return 0.5 // prevent image being smaller than card
       }
 
       return (1 - this.scale + 1) / 2
@@ -67,5 +67,9 @@ export default Vue.extend({
   box-shadow: -4px 22px 44px 0px rgba(0, 0, 0, 0.05);
   color: #e3e3e3;
   font-size: 22px;
+
+  > img {
+    user-select: none;
+  }
 }
 </style>

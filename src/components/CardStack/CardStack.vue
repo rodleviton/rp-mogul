@@ -41,6 +41,10 @@ export default Vue.extend({
       type: Function,
       required: true,
     },
+    onDetailViewMove: {
+      type: Function,
+      required: true,
+    },
     onChange: {
       type: Function,
       required: true,
@@ -72,11 +76,14 @@ export default Vue.extend({
       debounceRate: 25,
       dragging: false,
       dragStartX: 0,
+      dragStartY: 0,
       isTouch: "ontouchstart" in window,
       isDetailView: false,
       isDragging: false,
       isDraggingLeft: false,
       isDraggingRight: false,
+      isDraggingDown: false,
+      isDraggingUp: false,
       opacityMultiplier: 0.35,
       scaleMultiplier: 0.075,
       speed: 0.2,
@@ -190,6 +197,72 @@ export default Vue.extend({
         }
       })
     },
+    moveDetailView(currentYPos) {
+      this.isDraggingDown = currentYPos - this.dragStartY > 0
+      const MAX_CARD_TRAVEL_DISTANCE = 90
+      const activeCard = this.$data.stack[this.activeCardIndex]
+
+      if (this.isDraggingDown) {
+        const defaultProps = this.getDefaultCardProps(
+          activeCard,
+          this.activeCardIndex
+        )
+        const widthOffset = this.stackWidth - defaultProps.width
+        const widthFactor = widthOffset / MAX_CARD_TRAVEL_DISTANCE
+
+        const imageScaleOffset = 0.6 - defaultProps.imageScale
+        const imageScaleFactor = imageScaleOffset / MAX_CARD_TRAVEL_DISTANCE
+
+        this.$data.stack = this.$data.stack.map((card, index) => {
+          if (index === this.activeCardIndex) {
+            console.log(
+              card.width - defaultProps.width / MAX_CARD_TRAVEL_DISTANCE
+            )
+            return {
+              _uuid: card._uuid,
+              ...this.getDefaultCardProps(card, index),
+              width: card.width - defaultProps.width / MAX_CARD_TRAVEL_DISTANCE,
+              height: this.stackHeight,
+              xPos: 0,
+              imageScale: card.imageScale * imageScaleFactor,
+              transformOrigin: `100% 100%`,
+              borderRadius: 0,
+            }
+          }
+          return {
+            _uuid: card._uuid,
+            ...this.getDefaultCardProps(card, index),
+          }
+        })
+
+        this.onDetailViewMove(1 - widthFactor)
+      }
+    },
+    handleDetailView() {
+      this.isDetailView = true
+      this.speed = 0.5
+
+      this.$data.stack = this.$data.stack.map((card, index) => {
+        if (index === this.activeCardIndex) {
+          return {
+            _uuid: card._uuid,
+            ...this.getDefaultCardProps(card, index),
+            width: this.stackWidth,
+            height: this.stackHeight,
+            xPos: 0,
+            imageScale: 0.6,
+            transformOrigin: `100% 100%`,
+            borderRadius: 0,
+          }
+        }
+        return {
+          _uuid: card._uuid,
+          ...this.getDefaultCardProps(card, index),
+        }
+      })
+
+      this.$props.onSelect(this.$data.stack[1].id)
+    },
     calculateCardProp(prop, multiplier, defaultMultiplier, isActiveCard) {
       const offset = isActiveCard
         ? defaultMultiplier
@@ -197,44 +270,43 @@ export default Vue.extend({
 
       return prop + offset * this.activeCardOffset
     },
-    getDragXPos(e) {
-      return this.isTouch ? e.touches[0].clientX : e.clientX
+    getDragXPos(event) {
+      return this.isTouch ? event.touches[0].clientX : event.clientX
+    },
+    getDragYPos(event) {
+      return this.isTouch ? event.touches[0].clientY : event.clientY
     },
     onTouchStart(e) {
-      const dragXPos = this.getDragXPos(e)
-
       this.isDragging = true
-      this.dragStartX = dragXPos - this.elementXPosOffset
-      this.$el.addEventListener(
-        this.isTouch ? "touchmove" : "mousemove",
-        this.onDrag
-      )
+      this.dragStartX = this.getDragXPos(e) - this.elementXPosOffset
+      this.dragStartY = this.getDragYPos(e)
+
+      this.$el.addEventListener(this.drag, this.onDrag)
     },
     onTouchEnd() {
       this.isDragging = false
       this.dragStartX = 0
-      this.$el.removeEventListener(
-        this.isTouch ? "touchmove" : "mousemove",
-        this.onDrag
-      )
+      this.dragStartY = 0
 
-      const offset = this.activeCardOffset / this.activeCardMaxTravelDistance
+      this.$el.removeEventListener(this.drag, this.onDrag)
 
-      // Treat this like a click instead of the user dragging
-      if (offset === 0) {
-        if (this.isDetailView) {
-          this.onStackDeselect()
+      if (!this.isDetailView) {
+        const offset = this.activeCardOffset / this.activeCardMaxTravelDistance
+
+        // Treat this like a click instead of the user dragging
+        if (offset === 0) {
+          this.handleDetailView()
         } else {
-          this.onStackSelect()
+          this.updateStack()
         }
-      } else {
-        this.updateStack()
       }
     },
-    onDrag(e) {
-      const dragXPos = this.getDragXPos(e)
-
-      this.moveStack(dragXPos - this.elementXPosOffset)
+    onDrag(event) {
+      if (this.isDetailView) {
+        this.moveDetailView(this.getDragYPos(event))
+      } else {
+        this.moveStack(this.getDragXPos(event) - this.elementXPosOffset)
+      }
     },
     getCardStackPosition(index) {
       return index - 1 // this is the first card that is positioned offScreen
@@ -286,32 +358,6 @@ export default Vue.extend({
     /**
      * Callbacks
      */
-    onStackSelect() {
-      this.isDetailView = true
-      this.speed = 0.75
-
-      // TODO - refactor this into a method that tackes overrides
-      this.$data.stack = this.$data.stack.map((card, index) => {
-        if (index === 1) {
-          return {
-            _uuid: card._uuid,
-            ...this.getDefaultCardProps(card, index),
-            width: this.stackWidth,
-            height: this.stackHeight,
-            xPos: 0,
-            imageScale: 0.6,
-            transformOrigin: `100% 100%`,
-            borderRadius: 0,
-          }
-        }
-        return {
-          _uuid: card._uuid,
-          ...this.getDefaultCardProps(card, index),
-        }
-      })
-
-      this.$props.onSelect(this.$data.stack[1].id)
-    },
     onStackDeselect() {
       this.isDetailView = false
       this.speed = 0.2
@@ -364,19 +410,23 @@ export default Vue.extend({
     activeCardMaxTravelDistance() {
       return this.cardWidth + this.stackGutter
     },
+    // Normalize events for touch devices and desktop
+    drag() {
+      return this.isTouch ? "touchmove" : "mousemove"
+    },
+    touchStart() {
+      return this.isTouch ? "touchstart" : "mousedown"
+    },
+    touchEnd() {
+      return this.isTouch ? "touchend" : "mouseup"
+    },
   },
   mounted() {
     const debouncedOnTouchStart = debounce(this.onTouchStart, this.debounceRate)
-    document.addEventListener(
-      this.isTouch ? "touchstart" : "mousedown",
-      debouncedOnTouchStart
-    )
+    document.addEventListener(this.touchStart, debouncedOnTouchStart)
 
     const debouncedOnTouchEnd = debounce(this.onTouchEnd, this.debounceRate)
-    document.addEventListener(
-      this.isTouch ? "touchend" : "mouseup",
-      debouncedOnTouchEnd
-    )
+    document.addEventListener(this.touchEnd, debouncedOnTouchEnd)
 
     const clonedCards = [].concat(this.$props.cards)
     const lastCard = clonedCards.pop()
@@ -395,11 +445,15 @@ export default Vue.extend({
       const DOWN_ARROW = 40
 
       if (e.which === LEFT_ARROW) {
-        this.movePrevious()
+        if (!this.isDetailView) {
+          this.movePrevious()
+        }
       } else if (e.which === RIGHT_ARROW) {
-        this.moveNext()
+        if (!this.isDetailView) {
+          this.moveNext()
+        }
       } else if (e.which === UP_ARROW) {
-        this.onStackSelect()
+        this.handleDetailView()
       } else if (e.which === DOWN_ARROW) {
         this.onStackDeselect()
       }
