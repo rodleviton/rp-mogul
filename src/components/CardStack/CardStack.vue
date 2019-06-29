@@ -215,9 +215,6 @@ export default Vue.extend({
 
         this.$data.stack = this.$data.stack.map((card, index) => {
           if (index === this.activeCardIndex) {
-            console.log(
-              card.width - defaultProps.width / MAX_CARD_TRAVEL_DISTANCE
-            )
             return {
               _uuid: card._uuid,
               ...this.getDefaultCardProps(card, index),

@@ -90,7 +90,6 @@ export default Vue.extend({
   methods: {
     getStackYPosition() {
       const HEADER_HEIGHT = 90
-      console.log(1 - this.detailViewOffsetFactor)
       return this.isDetailView
         ? 0 + HEADER_HEIGHT * this.detailViewOffsetFactor
         : HEADER_HEIGHT
