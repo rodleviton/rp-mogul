@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Shell>
-      <router-view />
+      <Explorer />
     </Shell>
   </div>
 </template>
@@ -9,10 +9,12 @@
 <script>
 import Vue from "vue"
 import Shell from "@/components/Shell.vue"
+import Explorer from "@/views/Explorer.vue"
 
 export default Vue.extend({
   components: {
     Shell,
+    Explorer,
   },
 })
 </script>
