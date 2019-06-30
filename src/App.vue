@@ -18,11 +18,11 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-@font-face {
+/* @font-face {
   font-family: "Eina";
   src: url("~@/assets/fonts/eina-03-semibold.woff2") format("woff2"),
     url("~@/assets/fonts/eina-03-semibold.woff") format("woff");
-}
+} */
 
 #app {
   font-family: "Eina", serif;
