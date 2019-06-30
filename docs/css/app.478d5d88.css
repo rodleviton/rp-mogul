@@ -98,7 +98,7 @@
   bottom: -400px;
 }
 .star[data-v-7e312756] {
-  background: url(img/star.03c576d3.svg);
+  background: url(docs/img/star.03c576d3.svg);
   background-size: 100%;
   width: 15px;
   height: 15px;
@@ -156,8 +156,8 @@
 }
 @font-face {
   font-family: Eina;
-  src: url(fonts/eina-03-semibold.5cfdf3ef.woff2) format("woff2"),
-    url(fonts/eina-03-semibold.4dd68d20.woff) format("woff");
+  src: url(docs/fonts/eina-03-semibold.5cfdf3ef.woff2) format("woff2"),
+    url(docs/fonts/eina-03-semibold.4dd68d20.woff) format("woff");
 }
 #app {
   font-family: Eina, serif;
