@@ -29,7 +29,7 @@ export default Vue.extend({
 .panel {
   display: flex;
   text-align: left;
-  background: #fff;
+  background: transparent;
   position: absolute;
   bottom: -580px;
   width: 100%;

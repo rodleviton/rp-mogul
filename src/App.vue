@@ -34,6 +34,7 @@ export default Vue.extend({
   color: #1c1c1c;
   display: flex;
   justify-content: center;
-  padding: 100px 0;
+  align-items: center;
+  height: 100vh;
 }
 </style>

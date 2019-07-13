@@ -292,7 +292,7 @@ export default Vue.extend({
 
         // Treat this like a click instead of the user dragging
         if (offset === 0) {
-          this.handleDetailView()
+          // this.handleDetailView()
         } else {
           this.updateStack()
         }
@@ -450,9 +450,9 @@ export default Vue.extend({
           this.moveNext()
         }
       } else if (e.which === UP_ARROW) {
-        this.handleDetailView()
+        // this.handleDetailView()
       } else if (e.which === DOWN_ARROW) {
-        this.onStackDeselect()
+        // this.onStackDeselect()
       }
     }
 

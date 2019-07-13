@@ -1,5 +1,14 @@
 export const data = [
   {
+    id: "4",
+    title: "The Martian",
+    release: "10.2.18",
+    cover: "img/covers/the-martian.jpg",
+    rating: 2,
+    description:
+      "<p>A young blade runner's discovery of a long-buried secret leads him to track down former blade runner Rick Deckard, who's been missing for thirty years.</p>",
+  },
+  {
     id: "1",
     title: "Blade Runner 2049",
     release: "10.6.17",
@@ -23,15 +32,6 @@ export const data = [
     release: "10.6.17",
     cover: "img/covers/ex-machina.jpg",
     rating: 4,
-    description:
-      "<p>A young blade runner's discovery of a long-buried secret leads him to track down former blade runner Rick Deckard, who's been missing for thirty years.</p>",
-  },
-  {
-    id: "4",
-    title: "The Martian",
-    release: "10.2.18",
-    cover: "img/covers/the-martian.jpg",
-    rating: 2,
     description:
       "<p>A young blade runner's discovery of a long-buried secret leads him to track down former blade runner Rick Deckard, who's been missing for thirty years.</p>",
   },
